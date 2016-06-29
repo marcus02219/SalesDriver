@@ -1,0 +1,136 @@
+= Sales Driver APIs
+
+== Accounts API
+
+==== Create account
+    POST: /api/v1/accounts/create
+
+    parameters accepted
+      email:          String *required
+      password:       String *required minimum 6
+      name:           String *required
+      user_type:      String *required
+      birthday:       Date *required ex: '1980-5-20'
+      diagnosis:      String *required
+      school:         String *required
+      photo:          File *required
+
+      curl \
+        -F "email=tester3@email.com" \
+        -F "password=tester1" \
+        -F "name=tester" \
+        -F "user_type=A" \
+        -F "birthday=2016-5-20" \
+        -F "diagnosis=ttt" \
+        -F "school=first school" \
+        -F "photo=@/Users/marcus/Documents/data/me1.jpg" \
+        http://localhost:3000/api/v1/accounts/create
+      results:
+      {"status":"success",
+        "data":{
+          "id":"577330963b27547fcc000001",
+          "name":"tester",
+          "user_type":"A",
+          "email":"tester3@email.com",
+          "birthday":"2016-05-20",
+          "token":"zqTgTKo7WJGgnFxDTRVN",
+          "school":"first school",
+          "photo":"photo_url",
+          "trials":[],
+          "clients":[]
+        }
+      }
+==== Destroy account API
+    POST: /api/v1/accounts/destroy
+    parameters:
+      token:      String *required
+    results:
+      return sign out and success string
+
+==== Sign In(from app's account)
+
+    POST: /api/v1/accounts/sign_in
+
+    parameters accepted
+      'email'      String,      *required
+      'password'   String,      *requried
+    results:
+
+    curl \
+      -F "email=tester3@email.com" \
+      -F "password=tester1" \
+      http://localhost:3000/api/v1/accounts/sign_in
+
+
+==== Sign Out
+    POST: 'api/v1/accounts/sign_out'
+
+    parameters accepted
+    'email'      String,      *required
+
+    curl \
+      -F "email=tester3@email.com" \
+      http://localhost:3000/api/v1/accounts/sign_out
+
+== Client API
+==== Create client
+  POST: /api/v1/clients
+    parameters accepted
+      'token'         String,      *required
+      'first_name'    String,      *required
+      'last_name'     String,      *required
+      'birthday'      String,      *required
+      'diagnosis'     String,      *required
+      'school'        String,      *required
+      'photo'         File,        *required
+    results
+      {status: :success, data: {client data}}
+    curl \
+      -F "token=zqTgTKo7WJGgnFxDTRVN" \
+      -F "first_name=fname" \
+      -F "last_name=lname" \
+      -F "birthday=2016-5-20" \
+      -F "diagnosis=diagnosis" \
+      -F "school=first school" \
+      -F "photo=@/Users/marcus/Documents/data/me1.jpg" \
+      http://localhost:3000/api/v1/clients
+
+==== Get client by client_id
+  GET: /api/v1/clients
+    parameters accepted
+      'token'         String,       *required
+      'client_id'     String,       * required
+    results
+      {status: :success, data: {trial data}}
+    http://localhost:3000/api/v1/clients?token=zqTgTKo7WJGgnFxDTRVN&client_id=577337943b27547fcc000002
+
+== Trial API
+==== Create trial
+  POST: /api/v1/trials
+    parameters accepted
+      'token'         String,      *required
+      'name'          String,      *required
+      'number'        String,      *required
+      'result'        String,      *required
+      'level'         String,      *required
+      'language'      String,      *required
+      'prompt_type'   String,        *required
+    results
+      {status: :success, data: {trial data}}
+      curl \
+        -F "token=zqTgTKo7WJGgnFxDTRVN" \
+        -F "name=tname" \
+        -F "number=6" \
+        -F "result=60" \
+        -F "level=5" \
+        -F "language=first language" \
+        -F "prompt_type= prompt" \
+        http://localhost:3000/api/v1/trials
+==== Get triby by trial_id
+  GET: /api/v1/trials
+    parameters accepted
+      'token'         String,       *required
+      'trial_id'     String,       * required
+    results
+      {status: :success, data: {trial data}}
+    http://localhost:3000/api/v1/trials?token=zqTgTKo7WJGgnFxDTRVN&trial_id=57733e403b27548020000002
