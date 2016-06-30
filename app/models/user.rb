@@ -5,19 +5,27 @@ class User
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
-
+  validates :phone_number, presence: true
+  validates :phone_code, presence: true
   mount_uploader :photo, PhotoUploader
   ## Database authenticatable
-  field :name,                type: String, default: ""
-  field :user_type,           type: String, default: ""
-  field :birthday,            type: Date, default: ""
-  field :diagnosis,           type: String, default: ""
-  field :school,              type: String, default: ""
+  field :phone_number,        type: String, default: ""
+  field :phone_code,          type: String, default: ""
+  field :verified,            type: Boolean, default: false
+
+  field :first_name,          type: String, default: ""
+  field :last_name,           type: String, default: ""
+  field :address1,            type: String, default: ""
+  field :address2,            type: String, default: ""
+  field :city,                type: String, default: ""
+  field :state,               type: String, default: ""
+  field :country,             type: String, default: ""
+  field :postalcode,          type: String, default: ""
+
   field :photo,               type: String, default: ""
 
   field :email,              type: String, default: ""
   field :encrypted_password, type: String, default: ""
-
 
   ## Recoverable
   field :reset_password_token,   type: String
@@ -43,85 +51,64 @@ class User
   # field :failed_attempts, type: Integer, default: 0 # Only if lock strategy is :failed_attempts
   # field :unlock_token,    type: String # Only if unlock strategy is :email or :both
   # field :locked_at,       type: Time
-  field :from_social,               :type => String,    :default => ""     # Social login status
 
-
-  #field :access_token,              :type => String
-  field :user_auth_id,              :type => String
-
-  acts_as_token_authenticatable
-  field :authentication_token,      :type => String
+  field :social_type,         :type => String,    :default => "app"
+  field :token,               :type => String,    :default => ""
 
   has_many :trials, dependent: :destroy
   has_many :clients, dependent: :destroy
 
+  after_create :reminder
 
-  def self.find_by_token(token)
-    User.where(:authentication_token=>token).first
+  def reminder
+    @twilio_number = ENV['TWILIO_NUMBER']
+    @client = Twilio::REST::Client.new ENV['TWILIO_ACCOUNT_SID'], ENV['TWILIO_AUTH_TOKEN']
+    reminder = "Hi, Please use this number #{self.phone_code}"
+    message = @client.account.messages.create(
+      :from => @twilio_number,
+      :to => self.phone_number,
+      :body => reminder,
+    )
+    puts message.to
   end
 
-  field :name,                type: String, default: ""
-  field :user_type,           type: String, default: ""
-  field :birthday,            type: Date, default: ""
-  field :diagnosis,           type: String, default: ""
-  field :school,              type: String, default: ""
-  field :photo,               type: String, default: ""
+  def self.find_by_token(token)
+    User.where(:token=>token).first
+  end
 
+  def self.digital_code
+    (0...6).map{rand(9)}.join
+  end
 
   def info_by_json
     user = self
     user_info={
       id:user.id.to_s,
-      name:user.name == nil ? "" : user.name,
-      user_type:user.user_type == nil ? "" : user.user_type,
       email:user.email,
-      birthday:user.birthday,
-      token:user.authentication_token,
-      school:user.school == nil ? "" : user.school,
-      photo:user.photo_url,
-      trials: user.trials_by_json,
-      clients: user.clients_by_json
+      token:user.token,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      address1: user.address1,
+      address2: user.address2,
+      city: user.city,
+      state: user.state,
+      country: user.country,
+      postalcode: user.postalcode,
+      photo: user.photo_url
     }
   end
 
-  def trials_by_json
-    json_data = []
-    trials = self.trials
-    trials.each do |trial|
-      json_data << {
-        id:trial.id.to_s,
-        name: trial.name,
-        number: trial.number,
-        result: trial.result,
-        level: trial.level,
-        language: trial.language,
-        prompt_type: trial.prompt_type
-      }
-    end
-    json_data
-  end
+  # def generate_token(column)
+  #   begin
+  #     self[column] = SecureRandom.urlsafe_base64
+  #   end while User.exists?(column => self[column])
+  # end
 
-  def clients_by_json
-    json_data = []
-    clients = self.clients
-    clients.each do |client|
-      json_data << {
-        id: client.id.to_s,
-        first_name: client.first_name,
-        last_name: client.last_name,
-        birthday: client.birthday,
-        diagnosis: client.diagnosis,
-        school: client.school,
-        photo: client.photo_url
-      }
+  def generate_token
+    self.token = loop do
+      random_token = SecureRandom.urlsafe_base64(32)
+      break random_token unless !User.where(token: random_token).blank?
     end
-    json_data
-  end
-
-  def generate_token(column)
-    begin
-      self[column] = SecureRandom.urlsafe_base64
-    end while User.exists?(column => self[column])
   end
 
   def photo_url
@@ -135,4 +122,5 @@ class User
       # end
   	end
   end
+  # handle_asynchronously :reminder , :run_at => Proc.new { 3.seconds.from_now }
 end

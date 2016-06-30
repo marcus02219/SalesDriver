@@ -8,38 +8,27 @@
     parameters accepted
       email:          String *required
       password:       String *required minimum 6
-      name:           String *required
-      user_type:      String *required
-      birthday:       Date *required ex: '1980-5-20'
-      diagnosis:      String *required
-      school:         String *required
-      photo:          File *required
+      phone_number:   String *required
 
       curl \
-        -F "email=tester3@email.com" \
+        -F "email=tester1@email.com" \
         -F "password=tester1" \
-        -F "name=tester" \
-        -F "user_type=A" \
-        -F "birthday=2016-5-20" \
-        -F "diagnosis=ttt" \
-        -F "school=first school" \
-        -F "photo=@/Users/marcus/Documents/data/me1.jpg" \
+        -F "phone_number=+8613050386450" \
         http://localhost:3000/api/v1/accounts/create
       results:
-      {"status":"success",
-        "data":{
-          "id":"577330963b27547fcc000001",
-          "name":"tester",
-          "user_type":"A",
-          "email":"tester3@email.com",
-          "birthday":"2016-05-20",
-          "token":"zqTgTKo7WJGgnFxDTRVN",
-          "school":"first school",
-          "photo":"photo_url",
-          "trials":[],
-          "clients":[]
-        }
-      }
+      {"status":"success", "data":"sent verification code to your phone"}
+==== Verify phone code
+  POST: /api/v1/accounts/verify
+    Parameters accepted
+      phone_number String *
+      phone_code String *
+    Results
+      {status: :success, data: {client data}}
+    curl \
+      -F "phone_number=+8613050386450" \
+      -F "phone_code=681221" \
+      http://localhost:3000/api/v1/accounts/verify
+
 ==== Destroy account API
     POST: /api/v1/accounts/destroy
     parameters:
@@ -57,7 +46,7 @@
     results:
 
     curl \
-      -F "email=tester3@email.com" \
+      -F "email=tester1@email.com" \
       -F "password=tester1" \
       http://localhost:3000/api/v1/accounts/sign_in
 
@@ -71,66 +60,35 @@
     curl \
       -F "email=tester3@email.com" \
       http://localhost:3000/api/v1/accounts/sign_out
-
-== Client API
-==== Create client
-  POST: /api/v1/clients
-    parameters accepted
-      'token'         String,      *required
-      'first_name'    String,      *required
-      'last_name'     String,      *required
-      'birthday'      String,      *required
-      'diagnosis'     String,      *required
-      'school'        String,      *required
-      'photo'         File,        *required
-    results
+==== Setup user info
+  POST: /api/v1/accounts/setup
+    Parameters accepted
+      first_name String
+      last_name String
+      address1 String
+      address2 String
+      city  String
+      state String
+      country String
+      postalcode String
+      photo File data
+    Results
       {status: :success, data: {client data}}
     curl \
-      -F "token=zqTgTKo7WJGgnFxDTRVN" \
-      -F "first_name=fname" \
-      -F "last_name=lname" \
-      -F "birthday=2016-5-20" \
-      -F "diagnosis=diagnosis" \
-      -F "school=first school" \
+      -F "token=YHCGhCFqYOkgU-cC4xcpCQ" \
+      -F "first_name=f_name" \
+      -F "last_name=l_name" \
+      -F "address1=address1" \
+      -F "address2=address2" \
+      -F "city=city" \
+      -F "state=state" \
+      -F "country=country" \
+      -F "postalcode=955487" \
       -F "photo=@/Users/marcus/Documents/data/me1.jpg" \
-      http://localhost:3000/api/v1/clients
-
-==== Get client by client_id
-  GET: /api/v1/clients
-    parameters accepted
-      'token'         String,       *required
-      'client_id'     String,       * required
-    results
-      {status: :success, data: {trial data}}
-    http://localhost:3000/api/v1/clients?token=zqTgTKo7WJGgnFxDTRVN&client_id=577337943b27547fcc000002
-
-== Trial API
-==== Create trial
-  POST: /api/v1/trials
-    parameters accepted
-      'token'         String,      *required
-      'name'          String,      *required
-      'number'        String,      *required
-      'result'        String,      *required
-      'level'         String,      *required
-      'language'      String,      *required
-      'prompt_type'   String,        *required
-    results
-      {status: :success, data: {trial data}}
-      curl \
-        -F "token=zqTgTKo7WJGgnFxDTRVN" \
-        -F "name=tname" \
-        -F "number=6" \
-        -F "result=60" \
-        -F "level=5" \
-        -F "language=first language" \
-        -F "prompt_type= prompt" \
-        http://localhost:3000/api/v1/trials
-==== Get triby by trial_id
-  GET: /api/v1/trials
-    parameters accepted
-      'token'         String,       *required
-      'trial_id'     String,       * required
-    results
-      {status: :success, data: {trial data}}
-    http://localhost:3000/api/v1/trials?token=zqTgTKo7WJGgnFxDTRVN&trial_id=57733e403b27548020000002
+      http://localhost:3000/api/v1/accounts/setup
+==== Forgot Password
+  GET: /api/v1/accounts/forgot_password
+  parameters:
+    email:      String *required
+  results:
+    return success message

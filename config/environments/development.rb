@@ -54,5 +54,6 @@ Rails.application.configure do
     password: ENV["GMAIL_PASSWORD"]
   }
 
+  ENV['APNS_URL'] = "gateway.sandbox.push.apple.com"
 
 end

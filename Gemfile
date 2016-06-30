@@ -64,8 +64,17 @@ gem 'devise'
 gem 'devise-bootstrap-views'
 #gem 'devise-token_authenticatable'
 
+# Use Twilio
+gem 'twilio-ruby'
+gem 'phonelib'
 
-gem 'simple_token_authentication'
+#use redis, resque
+# gem 'redis'
+# gem 'resque'
+
+# Use pushmeup for pushnotification.
+gem 'pushmeup'
+# gem 'houston'
 
 gem 'redis'
 gem 'resque'
@@ -75,6 +84,7 @@ group :development, :test do
   gem 'byebug'
 end
 
+gem 'thin'
 gem 'puma'
 gem 'unicorn'
 gem 'figaro'
