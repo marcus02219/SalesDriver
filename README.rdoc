@@ -41,14 +41,36 @@
     POST: /api/v1/accounts/sign_in
 
     parameters accepted
-      'email'      String,      *required
-      'password'   String,      *requried
+      'email'         String,      *required
+      'password'      String,      *requried
+      'device_token'  String,      *requried
     results:
 
     curl \
       -F "email=tester1@email.com" \
       -F "password=tester1" \
       http://localhost:3000/api/v1/accounts/sign_in
+
+====    Login API using social
+      POST: /api/v1/accounts/social_sign_in
+      parameters:
+        email:        String *required
+        token:        String *required
+        social_type:  String *required
+        device_token: String *required
+        first_name:   String
+        last_name:    String
+        photo_url:    String
+
+
+    curl \
+      -F "email=socal@email.com" \
+      -F "token=tester1tester1tester1" \
+      -F "social_type=facebook" \
+      -F "device_token=a5s4dfa3we89hsdfhxfv4gh56dfj8rty7u" \
+      -F "first_name=fname" \
+      -F "photo_url=https://avatars.githubusercontent.com/u/8333299?size=100" \
+      http://localhost:3000/api/v1/accounts/social_sign_in
 
 
 ==== Sign Out

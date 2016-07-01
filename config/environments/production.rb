@@ -96,4 +96,6 @@ Rails.application.configure do
     password: ENV["GMAIL_PASSWORD"]
   }
 
+  ENV['host_url'] = 'http://54.218.41.81'
+
 end

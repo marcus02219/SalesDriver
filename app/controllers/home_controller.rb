@@ -26,6 +26,9 @@ class HomeController < ApplicationController
     if User.where(email:email).first.present?
       render json:{status: :failure, data: 'This email already exists. Please try another email'} and return
     end
+    if User.where(phone_number:phone_number).first.present?
+      render json:{status: :failure, data: 'This phone number already exists.'} and return
+    end
     user = User.new(email:email, password:password, phone_number:phone_number, phone_code:User.digital_code, verified: false)
     if user.save
       if sign_in(:user, user)
@@ -56,19 +59,22 @@ class HomeController < ApplicationController
       render :json => {status: :failure, data: "cannot find user"}
     end
   end
+
   # Login API
   # POST: /api/v1/accounts/sign_in
   # parameters:
-  #   email:      String *required
-  #   password:   String *required
+  #   email:        String *required
+  #   password:     String *required
+  #   device_token: String *required
   # results:
   #   return user_info
   def create_session
-    if params[:social]
-      social_sign_in(params)
+    if params[:social_type].present?
+      social_sign_in(params) and return
     end
-    email    = params[:email]
-    password = params[:password]
+    email         = params[:email]
+    password      = params[:password]
+    device_token  = params[:device_token]
     resource = User.find_for_database_authentication( :email => email )
     if resource.nil?
       render :json => {status: :failure, data: 'No Such User'}
@@ -79,6 +85,7 @@ class HomeController < ApplicationController
           resource.reminder
           render :json => {status: :failure,  data: "Please verify your phone number and try again."}
         else
+          resource.update(device_token: device_token)
           user = sign_in( :user, resource )
           render :json => {status: :success, :data => resource.info_by_json}
         end
@@ -106,6 +113,63 @@ class HomeController < ApplicationController
     else
     sign_out(resource)
        render :json => {status: :success, :data => 'sign out'}
+    end
+  end
+
+  # Login API using social
+  # POST: /api/v1/accounts/social_sign_in
+  # parameters:
+  #   email:        String *required
+  #   token:        String *required
+  #   social_type:  String *required
+  #   device_token: String *required
+  #   first_name:   String
+  #   last_name:    String
+  #   photo_url:    String
+
+  # results:
+  #   return user_info
+
+  def social_sign_in
+    if params[:token].present?
+      email        = params[:email].downcase    if params[:email].present?
+      token        = params[:token]
+      social_type  = params[:social_type]
+      password     = params[:token][0..10]
+      photo_url    = params[:photo_url]
+      first_name   = params[:first_name]
+      last_name    = params[:last_name]
+      device_token = params[:device_token]
+      user = User.any_of({:email=>email}).first
+      if user.present?
+        user.update(first_name: first_name, last_name: last_name, token: token, verified: true, device_token:device_token, remote_photo_url: photo_url)
+        if sign_in(:user, user)
+          render json: {:success => user.info_by_json}
+        else
+          render json: {:failure => 'cannot login'}
+        end
+      else
+          user = User.new(
+              email:email,
+              token:token,
+              password:password,
+              device_token: device_token,
+              first_name:first_name,
+              last_name:last_name,
+              social_type:social_type,
+              remote_photo_url: photo_url,
+              verified: true
+              )
+        if user.save
+          if sign_in(:user, user)
+            render json: {:success => user.info_by_json}
+          else
+            render json: {:failure => 'cannot login'}
+          end
+        else
+          render :json => {:failure => user.errors.messages}
+        end
+      end
     end
   end
 

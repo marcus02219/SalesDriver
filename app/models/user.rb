@@ -5,11 +5,12 @@ class User
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
-  validates :phone_number, presence: true
-  validates :phone_code, presence: true
+  validates :phone_number, presence: true, uniqueness: true, :unless => :verified?
+  validates :phone_code, presence: true, :unless => :verified?
   mount_uploader :photo, PhotoUploader
   ## Database authenticatable
   field :phone_number,        type: String, default: ""
+  field :device_token,        type: String, default: ""
   field :phone_code,          type: String, default: ""
   field :verified,            type: Boolean, default: false
 
@@ -61,6 +62,7 @@ class User
   after_create :reminder
 
   def reminder
+    return if self.verified
     @twilio_number = ENV['TWILIO_NUMBER']
     @client = Twilio::REST::Client.new ENV['TWILIO_ACCOUNT_SID'], ENV['TWILIO_AUTH_TOKEN']
     reminder = "Hi, Please use this number #{self.phone_code}"
@@ -115,11 +117,11 @@ class User
   	if self.photo.url.nil?
   		""
   	else
-      # if Rails.env.production?
-      #   self.photo.url
-      # else
-    		self.photo.url.gsub("#{Rails.root.to_s}/public/album/", "/public/album/")
-      # end
+      if Rails.env.production?
+        ENV['host_url'] + self.photo.url.gsub("#{Rails.root.to_s}/public/user/", "/public/user/")
+      else
+    		ENV['host_url'] + self.photo.url.gsub("#{Rails.root.to_s}/public/user/", "/user/")
+      end
   	end
   end
   # handle_asynchronously :reminder , :run_at => Proc.new { 3.seconds.from_now }

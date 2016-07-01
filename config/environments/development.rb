@@ -55,5 +55,5 @@ Rails.application.configure do
   }
 
   ENV['APNS_URL'] = "gateway.sandbox.push.apple.com"
-
+  ENV['host_url'] = 'http://localhost:3000'
 end
