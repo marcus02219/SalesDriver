@@ -24,20 +24,16 @@ module Endpoints
             user.generate_token
             user.verified = true
 
-            p user.token
-            p user.verified
-            p ">>>>>>>>>>>>"
-
             if user.save
-              return {state: 'success',  data: user.verified}
+              return {status: 1,  data: user.verified}
             else
-              return {state: :failure, data: user.errors.messages}
+              return {status: 0, data: user.errors.messages}
             end
           else
-            return {state: :failure, data: "Sorry for inconvenience, we are not able to verify this number, please try again."}
+            return {status: 0, data: "Sorry for inconvenience, we are not able to verify this number, please try again."}
           end
         else
-          return {state: :failure, data: "Your phone number doesn't exist"}
+          return {status: 0, data: "Your phone number doesn't exist"}
         end
       end
 
@@ -68,12 +64,12 @@ module Endpoints
             user.postalcode = params[:postalcode]
             user.photo      = params[:photo]
           if user.save
-            return {state: 'success',  data: user.info_by_json}
+            return {status: 1,  data: user.info_by_json}
           else
-            return {state: :failure, data: user.errors.messages}
+            return {status: 0, data: user.errors.messages}
           end
         else
-          return {state: :failure, data: "Wrong token"}
+          return {status: 0, data: "Wrong token"}
         end
       end
 
@@ -88,9 +84,9 @@ module Endpoints
         user = User.where(email:params[:email]).first
         if user.present?
           user.send_reset_password_instructions
-          {success: 'Email was sent successfully'}
+          {status: 1, data: 'Email was sent successfully'}
         else
-          {:failure => 'Cannot find your email'}
+          {status: 0, data: 'Cannot find your email'}
         end
       end
 

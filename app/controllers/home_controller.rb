@@ -24,20 +24,20 @@ class HomeController < ApplicationController
     phone_number  = params[:phone_number]
 
     if User.where(email:email).first.present?
-      render json:{status: :failure, data: 'This email already exists. Please try another email'} and return
+      render json:{status: 0, data: 'This email already exists. Please try another email'} and return
     end
     if User.where(phone_number:phone_number).first.present?
-      render json:{status: :failure, data: 'This phone number already exists.'} and return
+      render json:{status: 0, data: 'This phone number already exists.'} and return
     end
     user = User.new(email:email, password:password, phone_number:phone_number, phone_code:User.digital_code, verified: false)
     if user.save
       if sign_in(:user, user)
-        render :json => {status: :success, :data => "Sent verification code to your phone"}
+        render :json => {status: 1, :data => "Sent verification code to your phone"}
       else
-        render json: {status: :failure, :data => 'Can not create your account'}
+        render json: {status: 0, :data => 'Can not create your account'}
       end
     else
-      render :json => {status: :failure, :data => user.errors.messages}
+      render :json => {status: 0, :data => user.errors.messages}
     end
   end
   # Destroy account API
@@ -51,12 +51,12 @@ class HomeController < ApplicationController
     if user.present?
       if user.destroy
         sign_out(resource)
-        render :json => {status: :success, data: 'deleted account'}
+        render :json => {status: 1, data: 'deleted account'}
       else
-        render :json => {status: :failure, data: "cannot delete this user"}
+        render :json => {status: 0, data: "cannot delete this user"}
       end
     else
-      render :json => {status: :failure, data: "cannot find user"}
+      render :json => {status: 0, data: "cannot find user"}
     end
   end
 
@@ -77,20 +77,20 @@ class HomeController < ApplicationController
     device_token  = params[:device_token]
     resource = User.find_for_database_authentication( :email => email )
     if resource.nil?
-      render :json => {status: :failure, data: 'No Such User'}
+      render :json => {status: 0, data: 'No Such User'}
     else
       if resource.valid_password?( password )
         if resource.verified == false
           resource.update(phone_code: User::digital_code)
           resource.reminder
-          render :json => {status: :failure,  data: "Please verify your phone number and try again."}
+          render :json => {status: 0,  data: "Please verify your phone number and try again."}
         else
           resource.update(device_token: device_token)
           user = sign_in( :user, resource )
-          render :json => {status: :success, :data => resource.info_by_json}
+          render :json => {status: 1, :data => resource.info_by_json}
         end
       else
-        render :json => {status: :failure,  data: "Password is wrong"}
+        render :json => {status: 0,  data: "Password is wrong"}
       end
     end
    end
@@ -109,10 +109,10 @@ class HomeController < ApplicationController
     end
 
     if resource.nil?
-       render :json => {status: :failure, data:'No Such User'}
+       render :json => {status: 0, data:'No Such User'}
     else
     sign_out(resource)
-       render :json => {status: :success, :data => 'sign out'}
+       render :json => {status: 1, :data => 'sign out'}
     end
   end
 
@@ -144,9 +144,9 @@ class HomeController < ApplicationController
       if user.present?
         user.update(first_name: first_name, last_name: last_name, token: token, verified: true, device_token:device_token, remote_photo_url: photo_url)
         if sign_in(:user, user)
-          render json: {:success => user.info_by_json}
+          render json: {status: 1, data: user.info_by_json}
         else
-          render json: {:failure => 'cannot login'}
+          render json: {status: 0, data: 'cannot login'}
         end
       else
           user = User.new(
@@ -162,12 +162,12 @@ class HomeController < ApplicationController
               )
         if user.save
           if sign_in(:user, user)
-            render json: {:success => user.info_by_json}
+            render json: {status: 1, :data => user.info_by_json}
           else
-            render json: {:failure => 'cannot login'}
+            render json: {status: 0, :data => 'cannot login'}
           end
         else
-          render :json => {:failure => user.errors.messages}
+          render :json => {status: 0, :data => user.errors.messages}
         end
       end
     end
