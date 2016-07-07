@@ -23,11 +23,20 @@
       phone_number String *
       phone_code String *
     Results
-      {status: :success, data: {client data}}
+      {status: 1, data: {client data}}
     curl \
       -F "phone_number=+8613050386450" \
       -F "phone_code=681221" \
       http://localhost:3000/api/v1/accounts/verify
+==== Resend phone code
+POST: /api/v1/accounts/resend_phone_code
+  Parameters accepted
+    phone_number String *
+  Results
+    {status: 1, data: Message}
+    curl \
+      -F "phone_number=+8613050386450" \
+      http://localhost:3000/api/v1/accounts/resend_phone_code
 
 ==== Destroy account API
     POST: /api/v1/accounts/destroy
@@ -95,7 +104,7 @@
       postalcode String
       photo File data
     Results
-      {status: :success, data: {client data}}
+      {status: 1, data: {client data}}
     curl \
       -F "token=YHCGhCFqYOkgU-cC4xcpCQ" \
       -F "first_name=f_name" \

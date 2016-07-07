@@ -16,7 +16,7 @@ module Endpoints
       #     phone_number String *
       #     phone_code String *
       #   Results
-      #     {status: :success, data: {client data}}
+      #     {status: 1, data: {client data}}
       post :verify do
         user = User.where(phone_number: params[:phone_number]).first
         if user.present?
@@ -37,6 +37,26 @@ module Endpoints
         end
       end
 
+      # Resend phone code
+      # POST: /api/v1/accounts/resend_phone_code
+      #   Parameters accepted
+      #     phone_number String *
+      #   Results
+      #     {status: 1, data: Message}
+      post :resend_phone_code do
+        user = User.where(phone_number: params[:phone_number]).first
+        if user.present?
+          if user.update(phone_code:User.digital_code, verified: false)
+            user.reminder()
+            return {status: 1,  data: "Resent phone code"}
+          else
+            return {status: 0, data: user.errors.messages}
+          end
+        else
+          return {status: 0, data: "Your phone number doesn't exist"}
+        end
+      end
+
       # Setup user info
       # POST: /api/v1/accounts/setup
       #   Parameters accepted
@@ -50,7 +70,7 @@ module Endpoints
       #     postalcode String
       #     photo File data
       #   Results
-      #     {status: :success, data: {client data}}
+      #     {status: 1, data: {client data}}
       post :setup do
         user = User.find_by_token params[:token]
         if user.present?
