@@ -83,7 +83,7 @@ class HomeController < ApplicationController
         if resource.verified == false
           resource.update(phone_code: User::digital_code)
           resource.reminder
-          render :json => {status: -1,  data: "Please verify your phone number and try again."}
+          render :json => {status: -1,  data: {phone_number: resource.phone_number, message: "Please verify your phone number and try again."}}
         else
           resource.update(device_token: device_token)
           user = sign_in( :user, resource )

@@ -16,7 +16,7 @@
         -F "phone_number=+8613050386450" \
         http://localhost:3000/api/v1/accounts/create
       results:
-      {"status":"success", "data":"sent verification code to your phone"}
+      {"status": 1, "data":"sent verification code to your phone"}
 ==== Verify phone code
   POST: /api/v1/accounts/verify
     Parameters accepted
