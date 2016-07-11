@@ -3,7 +3,13 @@ Rails.application.routes.draw do
   ActiveAdmin.routes(self)
   get 'users' => "users#index"
 
-  devise_for :users
+  devise_for :users, :controllers => {:confirmations => 'confirmations', :registrations => 'registrations'}
+
+  devise_scope :user do
+    put "/confirm" => "confirmations#confirm"
+    post '/sign_up' => 'registrations#create'
+  end
+
   get 'home/index'
   root :to => 'home#index'
   mount API => '/'

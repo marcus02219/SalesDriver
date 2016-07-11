@@ -8,4 +8,5 @@
 
 puts "Clear user table"
 User.destroy_all
+AdminUser.create!(email: 'salesdriverapp@gmail.com', password: 'VTM123', password_confirmation: 'VTM123')
 puts "Finsh clear user table"

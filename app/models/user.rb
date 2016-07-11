@@ -1,8 +1,9 @@
 class User
   include Mongoid::Document
+  attr_accessor :skip_password_validation
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
-  devise :database_authenticatable, :registerable,
+  devise :database_authenticatable, :registerable, :confirmable,
          :recoverable, :rememberable, :trackable, :validatable
 
   validates :phone_number, presence: true, uniqueness: true, :unless => :verified?
@@ -13,6 +14,8 @@ class User
   field :device_token,        type: String, default: ""
   field :phone_code,          type: String, default: ""
   field :verified,            type: Boolean, default: false
+
+  field :company,             type: String, default: ""
 
   field :first_name,          type: String, default: ""
   field :last_name,           type: String, default: ""
@@ -42,11 +45,11 @@ class User
   field :current_sign_in_ip, type: String
   field :last_sign_in_ip,    type: String
 
-  ## Confirmable
-  # field :confirmation_token,   type: String
-  # field :confirmed_at,         type: Time
-  # field :confirmation_sent_at, type: Time
-  # field :unconfirmed_email,    type: String # Only if using reconfirmable
+  # Confirmable
+  field :confirmation_token,   type: String
+  field :confirmed_at,         type: Time
+  field :confirmation_sent_at, type: Time
+  field :unconfirmed_email,    type: String # Only if using reconfirmable
 
   ## Lockable
   # field :failed_attempts, type: Integer, default: 0 # Only if lock strategy is :failed_attempts
@@ -59,7 +62,7 @@ class User
   has_many :trials, dependent: :destroy
   has_many :clients, dependent: :destroy
 
-  after_create :reminder
+  # after_create :reminder
 
   def reminder
     return if self.verified
@@ -124,5 +127,16 @@ class User
       end
   	end
   end
+
+  def password_match?
+    self.password == self.password_confirmation
+  end
+  protected
+
+  def password_required?
+    return false if skip_password_validation
+    super
+  end
+
   # handle_asynchronously :reminder , :run_at => Proc.new { 3.seconds.from_now }
 end

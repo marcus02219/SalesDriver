@@ -12,7 +12,7 @@ ActiveAdmin.register User do
   #   permitted = [:permitted, :attributes]
   #   permitted << :other if resource.something?
   #   permitted
-  # end  
+  # end
   permit_params :email, :first_name, :last_name, :address1, :address2, :city, :state, :country, :postalcode, :phone_number
 
   index do
