@@ -77,11 +77,6 @@ gem 'pushmeup'
 
 gem 'redis'
 gem 'resque'
-group :development, :test do
-  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'letter_opener'
-  gem 'byebug'
-end
 
 gem 'thin'
 gem 'puma'
@@ -92,6 +87,17 @@ gem 'ransack', github: 'activerecord-hackery/ransack'
 # gem 'activeadmin',         git: 'git@bitbucket.org:Zhomart/active_admin.git', branch: 'mongoid-old'
 gem 'activeadmin',         github: 'Zhomart/active_admin', branch: 'mongoid-old'
 # gem 'activeadmin-mongoid', github: 'Zhomart/activeadmin-mongoid', branch: 'ransack'
+
+
+gem 'country_select'
+
+
+group :development, :test do
+  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
+  gem 'letter_opener'
+  gem 'byebug'
+end
+
 
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> in views

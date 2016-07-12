@@ -15,7 +15,7 @@ class RegistrationsController < Devise::RegistrationsController
     @user.skip_password_validation = true
     @user.phone_code = User.digital_code
     if @user.save
-      redirect_to :root_path
+      redirect_to "/", :notice => "Sent confirmation email"
     else
       render 'new'
     end

@@ -62,7 +62,7 @@ class User
   has_many :trials, dependent: :destroy
   has_many :clients, dependent: :destroy
 
-  # after_create :reminder
+  after_create :reminder
 
   def reminder
     return if self.verified
@@ -138,5 +138,5 @@ class User
     super
   end
 
-  # handle_asynchronously :reminder , :run_at => Proc.new { 3.seconds.from_now }
+  handle_asynchronously :reminder , :run_at => Proc.new { 3.seconds.from_now }
 end
