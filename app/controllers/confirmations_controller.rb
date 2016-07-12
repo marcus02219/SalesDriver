@@ -18,7 +18,7 @@ class ConfirmationsController < Devise::ConfirmationsController
         digested_token = Devise.token_generator.digest(self, :confirmation_token, @original_token)
         self.resource = resource_class.find_by(email: params[:user][:email])
         resource.assign_attributes(permitted_params) unless params[resource_name].nil?
-
+        resource.verified = true
         if resource.valid? && resource.password_match?
           self.resource.confirm!
           set_flash_message :notice, :confirmed

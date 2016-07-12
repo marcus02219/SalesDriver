@@ -31,6 +31,7 @@ class HomeController < ApplicationController
     end
     user = User.new(email:email, password:password, phone_number:phone_number, phone_code:User.digital_code, verified: false)
     if user.save
+      user.reminder
       if sign_in(:user, user)
         render :json => {status: 1, :data => "Sent verification code to your phone"}
       else
@@ -82,7 +83,6 @@ class HomeController < ApplicationController
       if resource.valid_password?( password )
         if resource.verified == false
           resource.update(phone_code: User::digital_code)
-          resource.reminder
           render :json => {status: -1,  data: {phone_number: resource.phone_number, message: "Please verify your phone number and try again."}}
         else
           resource.update(device_token: device_token)

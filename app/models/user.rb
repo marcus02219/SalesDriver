@@ -62,7 +62,7 @@ class User
   has_many :trials, dependent: :destroy
   has_many :clients, dependent: :destroy
 
-  after_create :reminder
+  # after_create :reminder
 
   def reminder
     return if self.verified
