@@ -43,7 +43,7 @@
         <div class="col-sm-4">
           <%= f.label :country %>
           <div class="clearfix"></div>
-          <%= country_select("user", "country", { priority_countries: ["US", "GB", "FR"], selected: "GB" }, { class: 'form-control col-sm-8', style:"width:300px;", data: { attribute: "value" } }) %>
+          <%= country_select("user", "country", { priority_countries: ["US", "GB", "FR"], selected: "US" }, { class: 'form-control col-sm-8', style:"width:300px;", data: { attribute: "value" } }) %>
         </div>
         <div class="col-sm-4">
           <%= f.label :postalcode %>
@@ -64,7 +64,7 @@
         <div class="col-sm-8">
           <%= f.label :email %>
           <%= f.email_field :email, autofocus: true, class: "form-control" %>
-        </div>        
+        </div>
       </div>
       <div class="clearfix"></div>
       <br/>
