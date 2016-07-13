@@ -79,7 +79,7 @@ Rails.application.configure do
   ENV["SECRET_KEY_BASE"] = "9dd1cef234a2758fc76d3d0f9c2291a824dc74d49ec9caafeb8b7d9e3dadd13b2c59272dfabe8cf753b3e33ee813d268bd843bcde07635e075769f2e8f50608d"
   ENV['APNS_URL'] = "gateway.push.apple.com"
 
-  config.action_mailer.default_url_options = { :host => "198.58.105.103" }
+  config.action_mailer.default_url_options = { :host => "54.218.41.81" }
 
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.perform_deliveries = true
