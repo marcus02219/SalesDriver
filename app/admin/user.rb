@@ -55,7 +55,7 @@ ActiveAdmin.register User do
   filter :social_type
 
   form do |f|
-    f.inputs "Admin Details" do
+    f.inputs "User Details" do
       f.input :email
       f.input :password
       f.input :password_confirmation
