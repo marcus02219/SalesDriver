@@ -62,7 +62,8 @@ gem 'unf'
 gem 'devise'
 gem 'devise-bootstrap-views'
 #gem 'devise-token_authenticatable'
-
+# gem "cancan"
+# gem 'rolify'
 # Use Twilio
 gem 'twilio-ruby'
 gem 'phonelib'

@@ -1,5 +1,4 @@
-ActiveAdmin.register User do
-
+ActiveAdmin.register User, as: "Sales Person" do
 
   # See permitted parameters documentation:
   # https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
@@ -13,35 +12,23 @@ ActiveAdmin.register User do
   #   permitted << :other if resource.something?
   #   permitted
   # end
-  permit_params :email, :first_name, :last_name, :address1, :address2, :city, :state, :country, :postalcode, :phone_number
+  permit_params :email, :first_name, :last_name, :address1, :address2, :city, :state, :country, :user_type, :verified
 
   index do
     selectable_column
     id_column
-    column :company
-    # column :first_name
-    # column :last_name
+    column :email
+    column :first_name
+    column :last_name
     column :address1
     column :address2
     column :city
     column :state
-    column :postalcode
-    column :phone_number
-    column :email
-    # column :device_token
-    # column :phone_code
-    # column :verified
-    # column :photo_url
-    # column :sign_in_count
-    # column :current_sign_in_at
-    # column :last_sign_in_at
-    # column :current_sign_in_ip
-    # column :last_sign_in_ip
-    # column :social_type
-    # column :token
+    column :country
     actions
   end
 
+  filter :user_type
   filter :email
   filter :first_name
   filter :last_name
@@ -49,19 +36,20 @@ ActiveAdmin.register User do
   filter :address2
   filter :city
   filter :state
-  filter :postalcode
-  filter :phone_number
-  filter :verified
-  filter :social_type
+  filter :country
 
   form do |f|
     f.inputs "User Details" do
       f.input :email
-      f.input :password
-      f.input :password_confirmation
-      f.input :phone_number
       f.input :first_name
       f.input :last_name
+      f.input :address1
+      f.input :address2
+      f.input :city
+      f.input :state
+      f.input :country, as: :country, priority_countries: ["US", "CA", "GB", "FR"]
+      f.input :user_type, :as => :hidden, :input_html => { :value => "seller" }
+      f.input :verified, :as => :hidden, :input_html => { :value => true }
     end
     f.actions
   end

@@ -9,6 +9,7 @@ class User
   validates :phone_number, presence: true, uniqueness: true, :unless => :verified?
   validates :phone_code, presence: true, :unless => :verified?
   mount_uploader :photo, PhotoUploader
+
   ## Database authenticatable
   field :phone_number,        type: String, default: ""
   field :device_token,        type: String, default: ""
@@ -28,6 +29,8 @@ class User
 
   field :photo,               type: String, default: ""
 
+  field :user_type,           type: String, default: "client" # client, seller
+
   field :email,              type: String, default: ""
   field :encrypted_password, type: String, default: ""
 
@@ -36,7 +39,7 @@ class User
   field :reset_password_sent_at, type: Time
 
   ## Rememberable
-  field :remember_created_at, type: Time
+  field :remember_created_at,     type: Time
 
   ## Trackable
   field :sign_in_count,      type: Integer, default: 0
@@ -62,6 +65,7 @@ class User
   has_many :trials, dependent: :destroy
   has_many :clients, dependent: :destroy
 
+  before_validation :check_user
   # after_create :reminder
 
   def reminder
@@ -131,6 +135,20 @@ class User
   def password_match?
     self.password == self.password_confirmation
   end
+
+  def check_user
+    if user_type == 'seller'
+      pswd = SecureRandom.urlsafe_base64(12)
+      self.password              = pswd
+      self.password_confirmation = pswd
+      UserMailer.send_created_notification_to_seller(email, pswd).deliver_later
+    else
+      p ">>>>>>>>>> *error* >>>>>>>>>>"
+    end
+  end
+
+  handle_asynchronously :reminder , :run_at => Proc.new { 3.seconds.from_now }
+
   protected
 
   def password_required?
@@ -138,5 +156,9 @@ class User
     super
   end
 
-  handle_asynchronously :reminder , :run_at => Proc.new { 3.seconds.from_now }
+  def confirmation_required?
+    false if self.user_type == "seller"
+  end
+
+
 end
