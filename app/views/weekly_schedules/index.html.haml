@@ -1,0 +1,21 @@
+.col-sm-8
+  %h3 Weekly (recurring)
+.col-sm-4{style:"padding-top:20px"}
+  = link_to "Add WeeklySchedule", new_seller_time_schedule_path(@seller), class: "btn btn-primary btn-md pull-right"
+%table.table.table-bordered.table-stripe.table-hover
+  %thead.thead-inverse
+    %tr
+      %th Week Name
+      %th WorkingDay?
+      %th Actions
+  %tbody
+    -@seller.weekly_schedules.each do |ws|
+      %tr
+        %td= ws.week
+        %td= ws.work_day
+        %td
+          = link_to edit_seller_weekly_schedule_path(@seller, ws), class: "btn btn-sm btn-primary" do
+            %i.glyphicon.glyphicon-edit
+
+          = link_to seller_weekly_schedule_path(@seller,ws), method: :delete, data:{confirm: "Are you sure?"}, class: "btn btn-sm btn-danger" do
+            %i.glyphicon.glyphicon-remove

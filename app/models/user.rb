@@ -62,11 +62,21 @@ class User
   field :social_type,         :type => String,    :default => "app"
   field :token,               :type => String,    :default => ""
 
-  has_many :trials, dependent: :destroy
+  has_many :time_schedules, dependent: :destroy
+  has_many :weekly_schedules, dependent: :destroy
+
   has_many :clients, dependent: :destroy
 
   before_validation :check_user
   # after_create :reminder
+
+  scope :sellers, -> {
+    where(user_type: "seller")
+  }
+
+  scope :clients, -> {
+    where(user_type: "client")
+  }
 
   def reminder
     return if self.verified
@@ -88,7 +98,9 @@ class User
   def self.digital_code
     (0...6).map{rand(9)}.join
   end
-
+  def is_seller?
+    user_type == "seller"
+  end
   def info_by_json
     user = self
     user_info={
@@ -143,7 +155,7 @@ class User
       self.password_confirmation = pswd
       UserMailer.send_created_notification_to_seller(email, pswd).deliver_later
     else
-      p ">>>>>>>>>> *error* >>>>>>>>>>"
+      p ">>>>>>>>>> *user is client* >>>>>>>>>>"
     end
   end
 

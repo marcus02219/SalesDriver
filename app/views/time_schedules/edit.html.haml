@@ -1,0 +1,13 @@
+%h3 Edit TimeSchedule
+= form_for @ts, url: seller_time_schedule_path(@seller, @ts), html: {class: "form-inline"} do |f|
+  .form-group
+    =f.label :start_time
+    =f.select :start_time, options_for_select(times_list.map{|tl| [tl, tl]}, f.object.start_time.strftime("%H:%M")), {}, {class: "form-control"}
+  .form-group
+    =f.label :end_time
+    =f.select :end_time, options_for_select(times_list.map{|tl| [tl, tl]}, f.object.end_time.strftime("%H:%M")), {}, {class: "form-control"}
+  .form-group
+    =f.label :breacked_time
+    =f.select :breacked_time, options_for_select(7.times.map{|ts| ["#{'%02d' % (ts*5)}", "#{'%02d' % (ts*5)}"]}, f.object.breacked_time),{}, {class: "form-control"}
+  %button.btn.btn-primary{:type => "submit"} Save
+  = link_to "Cancel", schedule_setup_path(@seller), class: "btn btn-danger"

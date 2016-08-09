@@ -3,6 +3,14 @@ Rails.application.routes.draw do
   ActiveAdmin.routes(self)
   get 'users' => "users#index"
 
+  get 'sales/:id/schedule_setup' => "sales#schedule_setup", as: :schedule_setup
+
+  resources :sellers do
+    resources :time_schedules
+    resources :weekly_schedules
+    resources :monthly_schedules
+  end
+
   devise_for :users, :controllers => {:confirmations => 'confirmations', :registrations => 'registrations'}
 
   devise_scope :user do

@@ -1,0 +1,52 @@
+%h2 Manage the Sales Persons time and calendar
+
+/ Nav tabs
+%ul.nav.nav-tabs
+  %li.active
+    =link_to "Call Intervals", "#tab1", data: {toggle: "tab", target: "admin", href: "#{seller_time_schedules_path(@seller)}"}
+  %li
+    =link_to "Weekly(recurring)", "#tab2", data: {toggle: "tab", target: "member", href: "#{seller_weekly_schedules_path(@seller)}"}
+  %li
+    =link_to "Monthly", "#tab3", data: {toggle: "tab", target: "moderator", href: "#{seller_monthly_schedules_path(@seller)}"}
+/ Tab panes
+.tab-content
+  .tab-pane.active#tab1
+    .col-sm-8
+      %h3 Interval Setup
+    .col-sm-4{style:"padding-top:20px"}
+      = link_to "Add TimeSchedule", new_seller_time_schedule_path(@seller), class: "btn btn-primary btn-md pull-right"
+    %table.table.table-bordered.table-stripe.table-hover
+      %thead.thead-inverse
+        %tr
+          %th Start Time
+          %th End Time
+          %th Blocked Time
+          %th Actions
+      %tbody
+        -@seller.time_schedules.each do |ts|
+          %tr
+            %td= ts.start_time.strftime("%H:%M")
+            %td= ts.end_time.strftime("%H:%M")
+            %td= ts.breacked_time
+            %td
+              = link_to edit_seller_time_schedule_path(@seller, ts), class: "btn btn-sm btn-primary" do
+                %i.glyphicon.glyphicon-edit
+
+              = link_to seller_time_schedule_path(@seller,ts), method: :delete, data:{confirm: "Are you sure?"}, class: "btn btn-sm btn-danger" do
+                %i.glyphicon.glyphicon-remove
+  .tab-pane#tab2
+  .tab-pane#tab3
+
+:javascript
+  $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+    var target = $(this).data("target");
+    var href = $(this).data("href");
+    $.ajax({
+      type: "GET",
+      url: href,
+      data: {tab: target},
+      dataType: "text"
+    }).always(function(data){
+      $(".tab-pane.active").html(data);
+    });
+  })

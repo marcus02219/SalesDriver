@@ -12,7 +12,19 @@ ActiveAdmin.register User, as: "Sales Person" do
   #   permitted << :other if resource.something?
   #   permitted
   # end
+
+  controller do
+    def scoped_collection
+      super.sellers
+    end
+  end
+
   permit_params :email, :first_name, :last_name, :address1, :address2, :city, :state, :country, :user_type, :verified
+
+
+  action_item :view, only: :show do
+    link_to 'Setup', "/sales/#{params[:id]}/schedule_setup"
+  end
 
   index do
     selectable_column

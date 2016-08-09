@@ -4,7 +4,5 @@ class API < Grape::API
   format :json
 
   # load remaining API endpoints
-  mount Endpoints::Accounts
-  mount Endpoints::Trials
-  mount Endpoints::Clients
+  mount Endpoints::Accounts  
 end
