@@ -8,6 +8,7 @@ class WeeklySchedulesController < ApplicationController
 
 	def new
     @ws = WeeklySchedule.new
+    @ws.time_schedules.build
 	end
 
   def create
@@ -30,7 +31,7 @@ class WeeklySchedulesController < ApplicationController
   def update
     @ws = WeeklySchedule.find(params[:id])
     respond_to do |format|
-      if @ws.update(ts_params)
+      if @ws.update(ws_params)
         format.html { redirect_to schedule_setup_path(@seller) }
       else
         flash.now[:error] = @ws.errors.full_messages.to_sentence
@@ -54,6 +55,10 @@ class WeeklySchedulesController < ApplicationController
     @seller = User.find(params[:seller_id])
   end
   def ws_params
-    params.require(:time_schedule).permit(:start_time, :end_time, :breacked_time, :name)
+    params.require(:weekly_schedule).permit(
+      :week,
+      :work_day,
+      :time_schedules_attributes=>[:id,:start_time, :end_time, :breacked_time, :name, :_destroy]
+    )
   end
 end

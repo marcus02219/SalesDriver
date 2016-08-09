@@ -1,0 +1,22 @@
+%h3 Add New TimeSchedule
+= form_for @ws, url: seller_weekly_schedules_path(@seller), html: {class: "form-inline"} do |f|
+  .row
+    .col-sm-12
+      .form-group
+        =f.label :week
+        =f.select :week, options_for_select(WeeklySchedule.week.options), {}, {class: "form-control"}
+      .form-group
+        =f.label :work_day
+        =f.check_box :work_day, class: "form-control"
+      .row
+        %br/
+        .col-sm-12
+          = f.fields_for :time_schedules do |ts_f|
+            = render "time_schedule_fields", f: ts_f
+          .links
+            = link_to_add_association 'Add Time Schedule', f, :time_schedules, {class: 'btn btn-primary'}
+  %br/
+  .row
+    .col-sm-12
+      %button.btn.btn-primary{:type => "submit"} Save
+      = link_to "Cancel", schedule_setup_path(@seller), class: "btn btn-danger"

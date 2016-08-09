@@ -1,0 +1,13 @@
+.row.nested-fields
+  .form-group
+    =f.label :start_time
+    =f.select :start_time, options_for_select(times_list.map{|tl| [tl, tl]}, f.object.start_time.present? ? f.object.start_time.strftime("%H:%M") : ''), {}, {class: "form-control"}
+  .form-group
+    =f.label :end_time
+    =f.select :end_time, options_for_select(times_list.map{|tl| [tl, tl]}, f.object.end_time.present? ? f.object.end_time.strftime("%H:%M") : ''), {}, {class: "form-control"}
+  .form-group
+    =f.label :breacked_time
+    =f.select :breacked_time, options_for_select(7.times.map{|ts| ["#{'%02d' % (ts*5)}", "#{'%02d' % (ts*5)}"]}, f.object.breacked_time),{}, {class: "form-control"}
+  .form-group
+    = link_to_remove_association f, data:{:confirm=>"Do you really want to do this?"}, class: 'btn btn-sm btn-danger' do
+      .glyphicon.glyphicon-remove
