@@ -22,8 +22,6 @@ Rails.application.routes.draw do
   root :to => 'home#index'
   mount API => '/'
 
-
-
   post 'api/v1/accounts/create'        => 'home#create'
   post 'api/v1/accounts/sign_in'        => 'home#create_session'
   post 'api/v1/accounts/social_sign_in' => 'home#social_sign_in'

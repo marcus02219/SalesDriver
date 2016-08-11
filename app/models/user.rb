@@ -64,8 +64,7 @@ class User
 
   has_many :time_schedules, dependent: :destroy
   has_many :weekly_schedules, dependent: :destroy
-
-  has_many :clients, dependent: :destroy
+  has_many :monthly_schedules, dependent: :destroy
 
   before_validation :check_user
   # after_create :reminder

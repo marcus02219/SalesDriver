@@ -1,0 +1,41 @@
+/ Modal
+.modal-dialog.modal-sm
+  .modal-content
+    .modal-header
+      %button.close{"data-dismiss" => "modal", :type => "button"} ×
+      %h4.modal-title Set Blocked Day
+    .modal-body
+      - url = @monthly_schedule.seller_id.nil? ? seller_monthly_schedules_path(@seller) : seller_monthly_schedule_path(@seller, @monthly_schedule)
+      = form_for @monthly_schedule, :url=>url, html:{class:"form-inline", remote: true, id: "set_monthly_schedule"} do |f|
+        .btn-group{"data-toggle" => "buttons-radio"}
+          %label
+            = @monthly_schedule.blocked_day
+            = f.hidden_field :blocked_day, value:@monthly_schedule.blocked_day
+          %br/
+          -# = f.radio_button :repeat, "ABC", :id=>"repeat", :style=>"display:none;"
+          -# %label.btn.btn-primary{:for => "first"} Recurring
+          -# = f.radio_button :repeat, "PQR", :id=>"specific", :style=>"display:none;"
+          -# %label.btn.btn-primary{:for => "second"} Specific
+          .form-group
+            %label.radio-inline{for: "repeat"}
+              = f.radio_button :repeat, "1", {checked:f.object.repeat==true, :id=>"repeat"}
+              Recurring
+            %br/
+            %label.radio-inline{for:"specific"}
+              -# %input#radio2{:checked => "checked", :name => "radioGroup", :type => "radio", :value => "option2"}/
+              = f.radio_button :repeat, "0", {checked:f.object.repeat==false, :id=>"specific"}
+              Specific
+
+
+
+        .modal-footer
+          %button.btn.btn-default{"data-dismiss" => "modal", :type => "button"} Close
+          = f.submit "Set", class:"btn btn-md btn-primary"
+
+:javascript
+  $(document).ready(function(){
+    $("#set_monthly_schedule").on("ajax:success", function(e, data, status, xhr){
+      alert(data.message);
+      $('#set_date').modal('hide');
+    });
+  });

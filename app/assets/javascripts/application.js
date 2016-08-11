@@ -16,3 +16,10 @@
 //= require cocoon
 //= require bootstrap-sprockets
 //= require_tree .
+$(document).ready(function(){
+  //  $(".calendar-day").click(function(){
+  //     date = $(this).data("date");
+  //     console.log(date);
+  //  });
+
+});

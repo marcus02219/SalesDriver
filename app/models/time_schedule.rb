@@ -16,7 +16,8 @@ class TimeSchedule
   field :ended_time,              :type => Time
 
   field :breacked_time,           :type => Integer
-
+  field :blocked_start_time,      :type => Time
+  field :blocked_end_time,        :type => Time
 
 
   def check_time

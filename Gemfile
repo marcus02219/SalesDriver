@@ -18,8 +18,10 @@ gem 'coffee-rails', '~> 4.1.0'
 # gem 'therubyracer', platforms: :ruby
 gem 'bootstrap-sass'
 # gem "bootstrap_calendar_rails"
-gem 'fullcalendar-rails'
-gem 'momentjs-rails'
+# gem 'fullcalendar-rails'
+# gem 'momentjs-rails'
+
+gem "simple_calendar"
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'

@@ -1,0 +1,26 @@
+= month_calendar events: @blocked_days do |date, blocked_days|
+  = content_tag :div, class: "calendar-day", data: {date: date} do
+    = date.strftime("%d")
+    - blocked_days.each do |evt|
+      .blocked-day
+        ="Blocked"
+
+-# #set_date.modal.hide.fade{"data-backdrop" => "static", "data-keyboard" => "false", :role => "dialog", :tabindex => "-1"} Loading...
+#set_date.modal.fade{:role => "dialog"}
+  .modal-dialog.modal-sm
+    .modal-content
+      .modal-header
+        Loading ...
+:javascript
+
+  $(".current-month .calendar-day").click(function(){
+     date = $(this).data("date");
+     $.ajax({
+      type: "GET",
+      url: "/sellers/#{@seller.id}/monthly_schedules/"+date+"/edit",
+     }).done(function(data){
+      $('#set_date').html(data);
+      $('#set_date').modal('show');
+     });
+
+  });
